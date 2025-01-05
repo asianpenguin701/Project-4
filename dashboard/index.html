@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Takeoff to Arrival</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+    }
+
+    #header {
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      padding: 12px 20px;
+      background: linear-gradient(to right, #000080, #A28AD8);
+      color: #f0f0f0;
+    }
+
+    #header h1 {
+      font-size: 1.8em;
+      margin: 0;
+    }
+
+    #content {
+      display: flex;
+      flex-grow: 1;
+    }
+
+    #map {
+      flex: 3;
+      height: 100%;
+      min-height: 500px;
+    }
+
+    #text-container {
+      flex: 1;
+      padding: 20px;
+      background-color: #f7f7f7;
+      color: #333;
+      overflow-y: auto;
+      box-shadow: -3px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #text-container h2 {
+      font-size: 1.4em;
+      margin-top: 0;
+    }
+
+    #text-container p {
+      font-size: 1em;
+      line-height: 1.5;
+    }
+
+    #prediction-form {
+      margin-top: 20px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      width: 100%;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #5c67a1;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #495384;
+    }
+
+    #weatherData, #predictionResult, #coordinates {
+      background-color: #e8e8e8;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      #content {
+        flex-direction: column;
+      }
+
+      #map {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>From Takeoff to Arrival: Predicting Weather-Related Delays with Machine Learning</h1>
+  </div>
+
+  <div id="content">
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Text Container -->
+    <div id="text-container">
+      <h2>About the Model</h2>
+      <p>
+        This dashboard utilizes a Random Forest machine learning model to predict weather-related flight delays across various airports in the United States. 
+        The model takes into account real-time weather data such as temperature, precipitation and wind speed to estimate the probability of a delay at a given airport.
+      </p>
+
+      <!-- Real-Time Prediction Form -->
+      <div id="prediction-form">
+        <h2>Predict Real-Time Delays</h2>
+        <label for="airport">Enter Airport IATA Code:</label>
+        <input type="text" id="airport" placeholder="e.g., JFK, LAX, ORD">
+        <button onclick="getWeatherData()">Predict Delay</button>
+
+        <h3>Coordinates</h3>
+        <pre id="coordinates">Awaiting input...</pre>
+
+        <h3>Weather Data</h3>
+        <pre id="weatherData">Awaiting input...</pre>
+
+        <h3>Prediction Result</h3>
+        <pre id="predictionResult">Awaiting input...</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="static/js/logic.js" defer></script>
+</body>
+</html>
+

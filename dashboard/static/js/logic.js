@@ -12,16 +12,16 @@ function getMarkerStyle(hubSize) {
     let fillColor;
     switch (hubSize) {
         case "Large":
-            fillColor = "rgb(188,189,220)";
+            fillColor = "rgb(106,81,163)";
             break;
         case "Medium":
-            fillColor = "rgb(140,107,177)";
+            fillColor = "rgb(158,154,200)";
             break;
         case "Small":
-            fillColor = "rgb(140,150,198)";
+            fillColor = "rgb(188,189,220)";
             break;
         default:
-            fillColor = "rgb(189,189,189)";
+            fillColor = "rgb(140,107,177)";
     }
     return {
         radius: hubSize === "Large" ? 15 : hubSize === "Medium" ? 10 : hubSize === "Small" ? 7 : 5,
@@ -57,73 +57,42 @@ d3.json('https://raw.githubusercontent.com/Levifahring/flight_delay_final/main/D
     })
     .catch(error => console.error('Error loading GeoJSON with D3:', error));
 
+// Use CSV file on Github for origin and destination probabilities
+const csvUrl = "https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/Levifahring/flight_delay_final/main/Data/average_delay_probabilities_by_origin_dest.csv";
 
-// Fetch real-time weather data using coordinates from GeoJSON and predict delays
-async function getWeatherData() {
-    const airport = document.getElementById('airport').value.trim();
-    const geoJsonUrl = 'https://raw.githubusercontent.com/Levifahring/flight_delay_final/main/Data/Airport_Hub_List.geojson';
+async function getDelayProbability() {
+    const originCode = document.getElementById('origin-airport').value.trim().toUpperCase();
+    const destinationCode = document.getElementById('destination-airport').value.trim().toUpperCase();
+
+    if (!originCode || !destinationCode) {
+        document.getElementById('predictionResult').innerText = 'Please enter valid IATA codes for both origin and destination.';
+        return;
+    }
 
     try {
-        // Fetch airport coordinates from the GeoJSON
-        const geoJsonResponse = await fetch(geoJsonUrl);
-        const geoJsonData = await geoJsonResponse.json();
+        // Fetch the CSV file
+        const response = await d3.csv(csvUrl);
 
-        // Match airport code (ARPT_NAME or IATA_CODE)
-        const airportFeature = geoJsonData.features.find(feature =>
-            feature.properties.ARPT_NAME.toUpperCase().includes(airport.toUpperCase()) ||
-            feature.properties.IATA_CODE.toUpperCase() === airport.toUpperCase()
-        );
+        // Find the row matching both origin and destination
+        const matchingRow = response.find(row => row['Origin'] === originCode && row['Dest'] === destinationCode);
 
-        if (!airportFeature) {
-            document.getElementById('coordinates').innerText = 'Airport not found.';
-            document.getElementById('weatherData').innerText = '';
-            document.getElementById('predictionResult').innerText = '';
+        if (!matchingRow) {
+            document.getElementById('predictionResult').innerText = `No data found for route from ${originCode} to ${destinationCode}.`;
             return;
         }
 
-        // Extract coordinates
-        const [lon, lat] = airportFeature.geometry.coordinates;
+        // Parse and display the delay probability
+        const delayProbability = (parseFloat(matchingRow['Delay_Probability']) || 0) * 100;
+        document.getElementById('predictionResult').innerText = `Delay Probability: ${delayProbability.toFixed(1)}%`;
 
-        // Display coordinates
-        document.getElementById('coordinates').innerText = `Latitude: ${lat}, Longitude: ${lon}`;
-
-        // Fetch real-time weather data using coordinates
-        const apiKey = 'fee834a770c7f5b2c7a3912288b1d388';
-        const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
-        const weatherData = await weatherResponse.json();
-
-        if (!weatherData.main) {
-            document.getElementById('weatherData').innerText = 'No weather data available.';
-            return;
-        }
-
-        // Display weather data
-        document.getElementById('weatherData').innerText = JSON.stringify(weatherData, null, 2);
-
-        // Extract relevant weather features
-        const weatherFeatures = {
-            Temperature: weatherData.main.temp,
-            Precipitation: weatherData.rain ? weatherData.rain['1h'] : 0,
-            WindSpeed: weatherData.wind.speed,
-            Visibility: weatherData.visibility / 1000,
-            StormEvents: weatherData.weather[0].description.toLowerCase().includes('storm') ? 1 : 0
-        };
-
-        // Send weather features to the backend for prediction
-        const predictionResponse = await fetch('http://localhost:5000/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(weatherFeatures)
-        });
-
-        const predictionResult = await predictionResponse.json();
-        document.getElementById('predictionResult').innerText = `Delay Probability: ${(predictionResult.probability * 100).toFixed(2)}%`;
     } catch (error) {
-        console.error('Error fetching weather data or making prediction:', error);
-        document.getElementById('coordinates').innerText = '';
-        document.getElementById('weatherData').innerText = 'Error fetching weather data.';
-        document.getElementById('predictionResult').innerText = '';
+        console.error('Error fetching delay probabilities:', error);
+        document.getElementById('predictionResult').innerText = 'Error calculating delay probability.';
     }
 }
+
+
+
+// Attach the function to your button's click event
+const predictButton = document.querySelector('button');
+predictButton.addEventListener('click', getDelayProbability);

@@ -48,6 +48,7 @@ d3.json('https://raw.githubusercontent.com/Levifahring/flight_delay_final/main/D
             onEachFeature: (feature, layer) => {
                 layer.bindPopup(`
                     <b>${feature.properties.ARPT_NAME}</b><br>
+                    IATA Code: ${feature.properties.ARPT_ID}<br>
                     City: ${feature.properties.CITY}<br>
                     State: ${feature.properties.STATE_NAME}<br>
                     Hub Size: ${feature.properties.HUB_SIZE}

@@ -109,7 +109,7 @@
 </head>
 <body>
   <div id="header">
-    <h1>From Takeoff to Arrival: Predicting Weather-Related Delays with Machine Learning</h1>
+    <h1>From Takeoff to Arrival: Predicting Flight Delay Probabilities Dashboard</h1>
   </div>
 
   <div id="content">
@@ -118,30 +118,76 @@
 
     <!-- Text Container -->
     <div id="text-container">
-      <h2>About the Model</h2>
+      <h2>Weather-Driven Delay Probabilities</h2>
       <p>
-        This dashboard utilizes a Random Forest machine learning model to predict weather-related flight delays across various airports in the United States. 
-        The model takes into account real-time weather data such as temperature, precipitation and wind speed to estimate the probability of a delay at a given airport.
+        This dashboard predicts potential flight delays using data from origin and destination airports. Enter airport IATA codes to view the mean probability of a delay.
       </p>
+      
 
-      <!-- Real-Time Prediction Form -->
+      <!-- Prediction Form -->
       <div id="prediction-form">
-        <h2>Predict Real-Time Delays</h2>
-        <label for="airport">Enter Airport IATA Code:</label>
-        <input type="text" id="airport" placeholder="e.g., JFK, LAX, ORD">
-        <button onclick="getWeatherData()">Predict Delay</button>
+    
+        <label for="origin-airport">Enter Origin Airport IATA Code:</label>
+        <input type="text" id="origin-airport" placeholder="e.g., JFK, LAX, ORD">
 
-        <h3>Coordinates</h3>
-        <pre id="coordinates">Awaiting input...</pre>
+        <label for="destination-airport">Enter Destination Airport IATA Code:</label>
+        <input type="text" id="destination-airport" placeholder="e.g., ATL, BOS, DFW">
 
-        <h3>Weather Data</h3>
-        <pre id="weatherData">Awaiting input...</pre>
+        <button>Predict Delay</button>
 
         <h3>Prediction Result</h3>
         <pre id="predictionResult">Awaiting input...</pre>
       </div>
+
+
+<!-- Hub Size Explanation -->
+
+      <!-- Next Page Button -->
+      <br>
+<a href="next_page.html" class="next-button">To Levi's Dashboard</a>
+
+
+<br><br>
+
+<p>
+  <strong>Definition of Airport Hub Classification:</strong><br>
+  <div style="display: flex; align-items: center; margin-bottom: 5px;">
+    <i style="background: rgb(106,81,163); width: 15px; height: 15px; border-radius: 50%; display: inline-block; margin-right: 10px;"></i>
+    <strong>Large Hub:</strong>
+  </div>
+  <div style="margin-left: 25px;">
+    Airports that account for at least 1% of total passenger boarding annually.
+  </div>
+  <br>
+  <div style="display: flex; align-items: center; margin-bottom: 5px;">
+    <i style="background: rgb(158,154,200); width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 10px;"></i>
+    <strong>Medium Hub:</strong>
+  </div>
+  <div style="margin-left: 25px;">
+    Airports that account for 0.25% to 1% of total passenger boarding annually.
+  </div>
+  <br>
+  <div style="display: flex; align-items: center; margin-bottom: 5px;">
+    <i style="background: rgb(188,189,220); width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 10px;"></i>
+    <strong>Small Hub:</strong>
+  <br>
+  </div>
+  <div style="margin-left: 25px;">
+    Airports that account for 0.05% to 0.25% of total passenger boarding annually.
+  </div>
+  <br>
+  <div style="display: flex; align-items: center; margin-bottom: 5px;">
+    <i style="background: rgb(140,107,177); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 10px;"></i>
+    <strong>Non-Hub:</strong>
+  </div>
+  <div style="margin-left: 25px;">
+    Airports that account for less than 0.05% of total passenger boarding annually.
+  </div>
+</p>
+
     </div>
   </div>
+
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -149,4 +195,3 @@
   <script src="static/js/logic.js" defer></script>
 </body>
 </html>
-
